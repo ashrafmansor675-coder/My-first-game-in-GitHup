@@ -1,41 +1,159 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>لعبتي الأولى</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبتي المطورة</title>
+    <style>
+        body {
+            background-color: #aed8f2;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            user-select: none;
+        }
 
-  <style>
-    body {
-      text-align: center;
-      font-family: Arial;
-      background-color: lightblue;
-      padding-top: 80px;
-    }
+        .game-container {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            min-width: 280px;
+        }
 
-    button {
-      font-size: 25px;
-      padding: 15px 30px;
-      background-color: green;
-      color: white;
-      border: none;
-      border-radius: 10px;
-    }
-  </style>
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .status-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .score { color: #27ae60; }
+        .timer { color: #e74c3c; }
+
+        .click-btn {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+            transition: all 0.1s ease;
+        }
+
+        /* تأثير عند تحريك الماوس أو اللمس */
+        .click-btn:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        /* تأثير بصري "أنيميشن" عند الضغط الفعلي */
+        .click-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 5px rgba(46, 204, 113, 0.4);
+        }
+
+        .restart-btn {
+            background-color: #7f8c8d;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none; /* يظهر فقط عند انتهاء اللعبة */
+        }
+    </style>
 </head>
-
 <body>
-  <h1>لعبتي الأولى</h1>
-  <h2>النقاط: <span id="points">0</span></h2>
 
-  <button onclick="addPoint()">اضغط هنا</button>
+    <div class="game-container">
+        <h1>لعبتي الأولى المطورّة 🎮</h1>
+        
+        <div class="status-container">
+            <div class="score">النقاط: <span id="score-text">0</span></div>
+            <div class="timer">الوقت: <span id="time-text">10</span>ث</div>
+        </div>
 
-  <script>
-    let points = 0;
+        <button class="click-btn" id="click-trigger">اضغط هنا!</button>
+        <button class="restart-btn" id="restart-trigger">إعادة اللعب 🔄</button>
+    </div>
 
-    function addPoint() {
-      points = points + 1;
-      document.getElementById("points").innerText = points;
-    }
-  </script>
+    <script>
+        // تعريف العناصر
+        let score = 0;
+        let timeLeft = 10;
+        let gameActive = true;
+        let timerInterval;
+
+        const scoreText = document.getElementById('score-text');
+        const timeText = document.getElementById('time-text');
+        const clickBtn = document.getElementById('click-trigger');
+        const restartBtn = document.getElementById('restart-trigger');
+
+        // بدء عداد الوقت تلقائياً عند تحميل الصفحة
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timeText.textContent = timeLeft;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        // عند الضغط على الزر الأخضر
+        clickBtn.addEventListener('click', () => {
+            if (gameActive) {
+                score++;
+                scoreText.textContent = score;
+            }
+        });
+
+        // عند انتهاء الوقت
+        function endGame() {
+            gameActive = false;
+            clickBtn.style.backgroundColor = '#95a5a6';
+            clickBtn.textContent = "انتهى الوقت!";
+            clickBtn.style.cursor = 'default';
+            restartBtn.style.display = 'inline-block'; // إظهار زر إعادة اللعب
+        }
+
+        // عند الضغط على زر إعادة اللعب
+        restartBtn.addEventListener('click', () => {
+            score = 0;
+            timeLeft = 10;
+            gameActive = true;
+            scoreText.textContent = score;
+            timeText.textContent = timeLeft;
+            clickBtn.style.backgroundColor = '#2ecc71';
+            clickBtn.textContent = "اضغط هنا!";
+            clickBtn.style.cursor = 'pointer';
+            restartBtn.style.display = 'none';
+            clearInterval(timerInterval);
+            startTimer();
+        });
+
+        // تشغيل اللعبة لأول مرة
+        startTimer();
+    </script>
+
 </body>
 </html>
+
